@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillBridge — Skill Gap Analyzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue-50: #E6F1FB; --blue-200: #85B7EB; --blue-600: #185FA5; --blue-800: #0C447C;
+    --teal-50: #E1F5EE; --teal-200: #5DCAA5; --teal-600: #0F6E56; --teal-800: #085041;
+    --amber-50: #FAEEDA; --amber-400: #EF9F27; --amber-600: #854F0B;
+    --green-50: #EAF3DE; --green-600: #3B6D11; --green-800: #27500A;
+    --coral-50: #FAECE7; --coral-600: #993C1D; --coral-800: #712B13;
+    --gray-50: #F1EFE8; --gray-100: #D3D1C7; --gray-400: #888780; --gray-800: #444441;
+    --purple-50: #EEEDFE; --purple-600: #534AB7; --purple-800: #3C3489;
+
+    --bg: #F7F9FC;
+    --card: #FFFFFF;
+    --text: #1A1A2E;
+    --text-muted: #5F5E5A;
+    --border: #D3D1C7;
+    --accent: #185FA5;
+    --accent-light: #E6F1FB;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: -0.5px;
+  }
+  .nav-logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 1.5rem; }
+  .nav-links a {
+    text-decoration: none;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--accent); }
+  .nav-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .nav-btn:hover { background: var(--blue-800); }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, #0C447C 0%, #185FA5 50%, #1D9E75 100%);
+    color: white;
+    padding: 5rem 2rem 4rem;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 0.3rem 1rem;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero p {
+    font-size: 1.05rem;
+    opacity: 0.85;
+    max-width: 520px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+  }
+  .hero-cta {
+    display: inline-block;
+    background: white;
+    color: var(--accent);
+    padding: 0.85rem 2rem;
+    border-radius: var(--radius-sm);
+    font-weight: 700;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .hero-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+
+  /* STATS BAR */
+  .stats-bar {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    background: var(--card);
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .stat-item { text-align: center; }
+  .stat-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .stat-label { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+  /* MAIN LAYOUT */
+  .container { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem; }
+  .section-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .section-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 2rem; }
+
+  /* STEP INDICATOR */
+  .steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 2.5rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .step.active { color: var(--accent); }
+  .step.done { color: var(--teal-600); }
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--gray-100);
+    color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700;
+    transition: all 0.3s;
+  }
+  .step.active .step-num { background: var(--accent); color: white; }
+  .step.done .step-num { background: var(--teal-600); color: white; }
+  .step-divider { width: 40px; height: 1px; background: var(--border); margin: 0 0.3rem; }
+
+  /* FORM CARD */
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+  .form-card h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .form-card .hint { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+  .form-group { margin-bottom: 1.2rem; }
+  .form-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .form-group select, .form-group input[type="text"] {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: border-color 0.2s;
+    outline: none;
+  }
+  .form-group select:focus, .form-group input[type="text"]:focus {
+    border-color: var(--accent);
+    background: white;
+  }
+
+  /* SKILL CHECKBOXES */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 0.6rem;
+  }
+  .skill-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    background: var(--bg);
+    user-select: none;
+  }
+  .skill-chip:hover { border-color: var(--blue-200); background: var(--blue-50); }
+  .skill-chip.selected {
+    border-color: var(--accent);
+    background: var(--accent-light);
+    color: var(--blue-800);
+  }
+  .skill-chip input[type="checkbox"] { display: none; }
+  .chip-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+    transition: background 0.2s;
+  }
+  .skill-chip.selected .chip-dot { background: var(--accent); }
+
+  /* CTA BUTTON */
+  .analyze-btn {
+    display: block;
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.3px;
+  }
+  .analyze-btn:hover { background: var(--blue-800); transform: translateY(-1px); }
+  .analyze-btn:active { transform: scale(0.99); }
+
+  /* RESULTS */
+  .results-section { display: none; }
+  .results-section.visible { display: block; }
+
+  .result-header {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .match-score {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .score-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--accent);
+  }
+  .score-label { font-size: 0.8rem; color: var(--text-muted); }
+
+  .score-bar-wrap {
+    flex: 1;
+    min-width: 200px;
+  }
+  .score-bar-wrap h4 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .score-bar-wrap p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.8rem; }
+  .progress-track {
+    height: 10px;
+    background: var(--gray-100);
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 5px;
+    background: linear-gradient(90deg, var(--accent), #1D9E75);
+    transition: width 1s ease;
+  }
+
+  /* CARDS GRID */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .skill-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+  }
+  .skill-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  .skill-card-title {
+    font-weight: 700;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .badge {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-high { background: var(--coral-50); color: var(--coral-600); }
+  .badge-medium { background: var(--amber-50); color: var(--amber-600); }
+  .badge-low { background: var(--green-50); color: var(--green-600); }
+  .badge-done { background: var(--teal-50); color: var(--teal-600); }
+
+  .skill-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .skill-row .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-missing { background: var(--coral-600); }
+  .dot-have { background: var(--teal-600); }
+
+  /* ROADMAP */
+  .roadmap-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  .roadmap-card h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+  }
+  .timeline { position: relative; padding-left: 1.8rem; }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px; top: 6px; bottom: 0;
+    width: 2px;
+    background: var(--gray-100);
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.55rem; top: 5px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 2px solid var(--card);
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+  .timeline-item.done::before { background: var(--teal-600); box-shadow: 0 0 0 2px var(--teal-600); }
+  .timeline-month {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--accent);
+    margin-bottom: 0.3rem;
+  }
+  .timeline-item.done .timeline-month { color: var(--teal-600); }
+  .timeline-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .timeline-desc { font-size: 0.84rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* RESOURCES */
+  .resources-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  .resource-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .resource-item:hover { border-color: var(--blue-200); background: var(--blue-50); }
+  .res-icon {
+    width: 34px; height: 34px;
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .res-icon.blue { background: var(--blue-50); }
+  .res-icon.teal { background: var(--teal-50); }
+  .res-icon.amber { background: var(--amber-50); }
+  .res-icon.purple { background: var(--purple-50); }
+  .res-name { font-weight: 600; font-size: 0.85rem; line-height: 1.3; }
+  .res-type { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+  /* JOBS TABLE */
+  .jobs-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  .jobs-table th {
+    text-align: left;
+    padding: 0.6rem 1rem;
+    background: var(--gray-50);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .jobs-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--gray-50);
+    vertical-align: middle;
+  }
+  .jobs-table tr:hover td { background: var(--bg); }
+  .match-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .match-high { background: var(--teal-50); color: var(--teal-600); }
+  .match-med { background: var(--amber-50); color: var(--amber-600); }
+  .match-low { background: var(--coral-50); color: var(--coral-600); }
+
+  /* FOOTER */
+  footer {
+    background: var(--card);
+    border-top: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+    margin-top: 3rem;
+  }
+  footer strong { color: var(--accent); }
+
+  /* TABS */
+  .tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 1.5rem;
+  }
+  .tab-btn {
+    padding: 0.7rem 1.2rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: -1px;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  .reset-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.2s;
+  }
+  .reset-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+
+  @media (max-width: 600px) {
+    .hero { padding: 3rem 1.2rem 2.5rem; }
+    .stats-bar { gap: 1.5rem; }
+    .form-card { padding: 1.2rem; }
+    .result-header { flex-direction: column; }
+    .match-score { align-items: flex-start; }
+    nav { padding: 0 1rem; }
+    .nav-links { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">Skill<span>Bridge</span></div>
+  <div class="nav-links">
+    <a href="#analyzer" onclick="event.preventDefault(); scrollToId('analyzer')">Analyzer</a>
+    <a href="#jobs" onclick="event.preventDefault(); goToJobs()">Jobs</a>
+    <a href="#about" onclick="event.preventDefault(); scrollToId('about')">About</a>
+  </div>
+  <button class="nav-btn" onclick="scrollToId('analyzer')">Get Started</button>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🎓 For Students &amp; Job Seekers</div>
+  <h1>Find Your Skill Gaps.<br/>Build Your Career Path.</h1>
+  <p>Tell us where you are. We'll show you what's missing — and the fastest path to get job-ready in Gujarat's growing tech market.</p>
+  <a href="#analyzer" class="hero-cta" onclick="event.preventDefault(); scrollToId('analyzer')">Analyze My Skills →</a>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item"><div class="stat-num">50+</div><div class="stat-label">In-demand skills tracked</div></div>
+  <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Career paths mapped</div></div>
+  <div class="stat-item"><div class="stat-num">200+</div><div class="stat-label">Free learning resources</div></div>
+  <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Students helped</div></div>
+</div>
+
+<!-- ANALYZER SECTION -->
+<div class="container" id="analyzer">
+
+  <!-- STEP INDICATOR -->
+  <div class="steps">
+    <div class="step active" id="step1">
+      <div class="step-num">1</div> Your Profile
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" id="step2">
+      <div class="step-num">2</div> Current Skills
+    </div>
+    <div class="step-divider"></div>
+    <div class="step" id="step3">
+      <div class="step-num">3</div> Results &amp; Roadmap
+    </div>
+  </div>
+
+  <!-- FORM SECTION -->
+  <div id="formSection">
+
+    <!-- PROFILE CARD -->
+    <div class="form-card">
+      <h3>📋 Your Profile</h3>
+      <div class="hint">Tell us about yourself so we can personalize your skill roadmap.</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;" class="profile-grid">
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="userName" placeholder="e.g. Rahul Patel"/>
+        </div>
+        <div class="form-group">
+          <label>Education Level</label>
+          <select id="education">
+            <option value="">-- Select --</option>
+            <option value="12th">12th Pass</option>
+            <option value="diploma">Diploma</option>
+            <option value="be-student" selected>BE / B.Tech Student</option>
+            <option value="be-grad">BE / B.Tech Graduate</option>
+            <option value="mtech">M.Tech / MCA</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Target Career Path</label>
+          <select id="careerPath">
+            <option value="">-- Select --</option>
+            <option value="webdev">Web Developer</option>
+            <option value="fullstack">Full Stack Developer</option>
+            <option value="datascience">Data Science / ML</option>
+            <option value="android">Android Developer</option>
+            <option value="devops">DevOps Engineer</option>
+            <option value="uiux">UI/UX Designer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Experience Level</label>
+          <select id="experience">
+            <option value="beginner">Beginner (0–6 months)</option>
+            <option value="intermediate">Intermediate (6m–2yr)</option>
+            <option value="experienced">Experienced (2yr+)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- SKILLS CARD -->
+    <div class="form-card">
+      <h3>✅ Skills You Already Have</h3>
+      <div class="hint">Select all skills you're comfortable with. Be honest — this helps us give accurate results.</div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 0.6rem;">Programming Languages</div>
+        <div class="skills-grid" id="lang-skills">
+          <label class="skill-chip"><input type="checkbox" value="HTML/CSS"/> <span class="chip-dot"></span> HTML / CSS</label>
+          <label class="skill-chip"><input type="checkbox" value="JavaScript"/> <span class="chip-dot"></span> JavaScript</label>
+          <label class="skill-chip"><input type="checkbox" value="Python"/> <span class="chip-dot"></span> Python</label>
+          <label class="skill-chip"><input type="checkbox" value="Java"/> <span class="chip-dot"></span> Java</label>
+          <label class="skill-chip"><input type="checkbox" value="C/C++"/> <span class="chip-dot"></span> C / C++</label>
+          <label class="skill-chip"><input type="checkbox" value="PHP"/> <span class="chip-dot"></span> PHP</label>
+          <label class="skill-chip"><input type="checkbox" value="TypeScript"/> <span class="chip-dot"></span> TypeScript</label>
+          <label class="skill-chip"><input type="checkbox" value="SQL"/> <span class="chip-dot"></span> SQL</label>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 0.6rem;">Frameworks &amp; Libraries</div>
+        <div class="skills-grid">
+          <label class="skill-chip"><input type="checkbox" value="React"/> <span class="chip-dot"></span> React.js</label>
+          <label class="skill-chip"><input type="checkbox" value="Node.js"/> <span class="chip-dot"></span> Node.js</label>
+          <label class="skill-chip"><input type="checkbox" value="Express"/> <span class="chip-dot"></span> Express.js</label>
+          <label class="skill-chip"><input type="checkbox" value="Bootstrap"/> <span class="chip-dot"></span> Bootstrap</label>
+          <label class="skill-chip"><input type="checkbox" value="Django"/> <span class="chip-dot"></span> Django</label>
+          <label class="skill-chip"><input type="checkbox" value="Spring Boot"/> <span class="chip-dot"></span> Spring Boot</label>
+          <label class="skill-chip"><input type="checkbox" value="Vue.js"/> <span class="chip-dot"></span> Vue.js</label>
+          <label class="skill-chip"><input type="checkbox" value="Flutter"/> <span class="chip-dot"></span> Flutter</label>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 1.5rem;">
+        <div style="font-size: 0.8rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-muted); margin-bottom: 0.6rem;">Tools &amp; Concepts</div>
+        <div class="skills-grid">
+          <label class="skill-chip"><input type="checkbox" value="Git/GitHub"/> <span class="chip-dot"></span> Git / GitHub</label>
+          <label class="skill-chip"><input type="checkbox" value="REST APIs"/> <span class="chip-dot"></span> REST APIs</label>
+          <label class="skill-chip"><input type="checkbox" value="MongoDB"/> <span class="chip-dot"></span> MongoDB</label>
+          <label class="skill-chip"><input type="checkbox" value="MySQL"/> <span class="chip-dot"></span> MySQL</label>
+          <label class="skill-chip"><input type="checkbox" value="Docker"/> <span class="chip-dot"></span> Docker</label>
+          <label class="skill-chip"><input type="checkbox" value="Linux"/> <span class="chip-dot"></span> Linux</label>
+          <label class="skill-chip"><input type="checkbox" value="AWS/Cloud"/> <span class="chip-dot"></span> AWS / Cloud</label>
+          <label class="skill-chip"><input type="checkbox" value="DSA"/> <span class="chip-dot"></span> Data Structures</label>
+        </div>
+      </div>
+
+    </div>
+
+    <button class="analyze-btn" onclick="analyzeSkills()">🔍 Analyze My Skill Gap</button>
+  </div>
+
+  <!-- RESULTS SECTION -->
+  <div class="results-section" id="resultsSection">
+
+    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 0.8rem;">
+      <div>
+        <h2 class="section-title" id="resultName">Your Skill Gap Report</h2>
+        <p class="section-sub" id="resultSubtitle">Personalized for your career path</p>
+      </div>
+      <button class="reset-btn" onclick="resetForm()">← Start Over</button>
+    </div>
+
+    <!-- SCORE CARD -->
+    <div class="result-header">
+      <div class="score-bar-wrap">
+        <h4 id="resultCareer">Web Developer</h4>
+        <p id="resultLevel">Based on your current skills and education</p>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+      </div>
+      <div class="match-score">
+        <div class="score-num" id="scoreNum">0%</div>
+        <div class="score-label">Job Ready Score</div>
+      </div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tab-bar">
+      <button class="tab-btn active" onclick="switchTab('skills-tab', this)">Skill Analysis</button>
+      <button class="tab-btn" onclick="switchTab('roadmap-tab', this)">Learning Roadmap</button>
+      <button class="tab-btn" onclick="switchTab('jobs-tab', this)">Job Market</button>
+      <button class="tab-btn" onclick="switchTab('resources-tab', this)">Free Resources</button>
+    </div>
+
+    <!-- TAB: SKILLS -->
+    <div class="tab-pane active" id="skills-tab">
+      <div class="cards-grid" id="skillCards"></div>
+    </div>
+
+    <!-- TAB: ROADMAP -->
+    <div class="tab-pane" id="roadmap-tab">
+      <div class="roadmap-card">
+        <h3>📅 Your Personalized Learning Roadmap</h3>
+        <div class="timeline" id="roadmapTimeline"></div>
+      </div>
+    </div>
+
+    <!-- TAB: JOBS -->
+    <div id="jobs-anchor"></div>
+    <div class="tab-pane" id="jobs-tab">
+      <div class="form-card">
+        <h3>💼 Job Opportunities in Gujarat &amp; India</h3>
+        <div class="hint">Based on your target role — jobs listed from Vadodara, Ahmedabad, and remote positions.</div>
+        <table class="jobs-table" id="jobsTable">
+          <thead>
+            <tr>
+              <th>Role</th>
+              <th>Company Type</th>
+              <th>Location</th>
+              <th>Avg. Salary</th>
+              <th>Your Match</th>
+            </tr>
+          </thead>
+          <tbody id="jobsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB: RESOURCES -->
+    <div class="tab-pane" id="resources-tab">
+      <div class="form-card">
+        <h3>📚 Recommended Free Learning Resources</h3>
+        <div class="hint">Curated specifically for the skills you need to build.</div>
+        <div class="resources-grid" id="resourceGrid"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer id="about">
+  <p>Built by <strong>Divy Soni</strong> students.<br/>
+  Helping bridge the skill gap between education and employment. 🇮🇳</p>
+  <p style="margin-top: 0.5rem; font-size: 0.75rem; color: #aaa;">SkillBridge v1.0 — Society Impact Project | BE IT Student</p>
+</footer>
+
+<script>
+const CAREER_DATA = {
+  webdev: {
+    title: "Web Developer",
+    required: ["HTML/CSS","JavaScript","React","Git/GitHub","REST APIs","Bootstrap","MySQL","DSA"],
+    nice: ["TypeScript","Node.js","MongoDB","Docker"],
+    jobs: [
+      {role:"Junior Web Developer", company:"IT Startup", loc:"Vadodara", salary:"₹2.5–4 LPA", match:"high"},
+      {role:"Frontend Developer", company:"Product Company", loc:"Ahmedabad", salary:"₹3–6 LPA", match:"high"},
+      {role:"UI Developer", company:"Service Company", loc:"Remote/Gujarat", salary:"₹3–5 LPA", match:"med"},
+      {role:"Web Developer Intern", company:"Digital Agency", loc:"Vadodara", salary:"₹8–15K/mo", match:"high"},
+    ],
+    roadmap: [
+      {month:"Month 1–2", title:"Strengthen HTML, CSS & JS Basics", desc:"Build 3 responsive projects. Master Flexbox, Grid, and DOM manipulation.", done: false},
+      {month:"Month 3", title:"Learn React.js", desc:"Components, hooks (useState, useEffect), props, and React Router.", done: false},
+      {month:"Month 4", title:"Backend Basics with Node.js + Express", desc:"Build a REST API, connect to MongoDB, understand CRUD operations.", done: false},
+      {month:"Month 5", title:"Version Control & Deployment", desc:"Master Git/GitHub workflow. Deploy projects on Netlify, Vercel, or Railway.", done: false},
+      {month:"Month 6", title:"Build Your Portfolio Project", desc:"Create a full-stack web app as your capstone. Add it to GitHub and LinkedIn.", done: false},
+    ],
+    resources: [
+      {name:"The Odin Project", type:"Full Web Dev Curriculum", color:"blue", icon:"🌐"},
+      {name:"freeCodeCamp", type:"HTML, CSS, JS, React", color:"teal", icon:"🎓"},
+      {name:"CS50 Web (Harvard)", type:"Python, JS, Django", color:"purple", icon:"🏛️"},
+      {name:"JavaScript.info", type:"In-depth JS Guide", color:"amber", icon:"📖"},
+      {name:"React Docs (react.dev)", type:"Official React Tutorial", color:"blue", icon:"⚛️"},
+      {name:"W3Schools", type:"HTML/CSS/JS Reference", color:"teal", icon:"📚"},
+    ]
+  },
+  fullstack: {
+    title: "Full Stack Developer",
+    required: ["HTML/CSS","JavaScript","React","Node.js","Express","MongoDB","MySQL","Git/GitHub","REST APIs","DSA"],
+    nice: ["TypeScript","Docker","AWS/Cloud","Linux"],
+    jobs: [
+      {role:"Full Stack Developer", company:"Product Startup", loc:"Ahmedabad", salary:"₹4–8 LPA", match:"high"},
+      {role:"MERN Stack Developer", company:"IT Company", loc:"Vadodara/Remote", salary:"₹3.5–7 LPA", match:"high"},
+      {role:"Backend Developer", company:"Fintech Startup", loc:"Ahmedabad", salary:"₹5–9 LPA", match:"med"},
+      {role:"Software Engineer", company:"MNC", loc:"Pune/Bangalore", salary:"₹6–12 LPA", match:"low"},
+    ],
+    roadmap: [
+      {month:"Month 1–2", title:"Master JavaScript & React", desc:"Advanced JS concepts, ES6+, async/await. Build interactive React apps.", done: false},
+      {month:"Month 3", title:"Node.js & Express Backend", desc:"REST API design, middleware, authentication with JWT.", done: false},
+      {month:"Month 4", title:"Databases — SQL & NoSQL", desc:"MySQL for relational data, MongoDB for flexible schemas.", done: false},
+      {month:"Month 5", title:"DevOps Basics & Deployment", desc:"Docker fundamentals, deploy on AWS EC2 or Heroku.", done: false},
+      {month:"Month 6", title:"Full Stack Capstone Project", desc:"Build a complete product: frontend + backend + database + deployed.", done: false},
+    ],
+    resources: [
+      {name:"The Odin Project", type:"Full Stack Curriculum", color:"blue", icon:"🌐"},
+      {name:"Node.js Docs + Tutorials", type:"Official Node.js Learning", color:"teal", icon:"⚡"},
+      {name:"MongoDB University", type:"Free MongoDB Courses", color:"green", icon:"🍃"},
+      {name:"FreeCodeCamp", type:"Backend Certification", color:"amber", icon:"🎓"},
+      {name:"Docker Getting Started", type:"Containerization Basics", color:"blue", icon:"🐳"},
+      {name:"Roadmap.sh", type:"Full Stack Developer Path", color:"purple", icon:"🗺️"},
+    ]
+  },
+  datascience: {
+    title: "Data Scientist / ML Engineer",
+    required: ["Python","SQL","DSA","Git/GitHub","MySQL"],
+    nice: ["AWS/Cloud","Docker","Linux","MongoDB"],
+    jobs: [
+      {role:"Data Analyst", company:"Analytics Firm", loc:"Ahmedabad", salary:"₹3–6 LPA", match:"high"},
+      {role:"ML Engineer (Junior)", company:"AI Startup", loc:"Remote", salary:"₹5–10 LPA", match:"med"},
+      {role:"Data Science Intern", company:"Research Company", loc:"Bangalore/Remote", salary:"₹10–20K/mo", match:"high"},
+      {role:"Business Analyst", company:"Consulting", loc:"Gujarat", salary:"₹4–7 LPA", match:"high"},
+    ],
+    roadmap: [
+      {month:"Month 1", title:"Python for Data Science", desc:"NumPy, Pandas, Matplotlib. Work with real datasets from Kaggle.", done: false},
+      {month:"Month 2", title:"Statistics & Probability", desc:"Descriptive stats, distributions, hypothesis testing, correlation.", done: false},
+      {month:"Month 3", title:"Machine Learning Fundamentals", desc:"Scikit-learn: regression, classification, clustering, model evaluation.", done: false},
+      {month:"Month 4", title:"Deep Learning Intro", desc:"TensorFlow/Keras basics, neural networks, CNNs.", done: false},
+      {month:"Month 5–6", title:"Projects & Kaggle Competitions", desc:"Solve 2–3 real problems. Build a GitHub portfolio with Jupyter notebooks.", done: false},
+    ],
+    resources: [
+      {name:"Kaggle Learn", type:"Free ML & Python Courses", color:"blue", icon:"📊"},
+      {name:"fast.ai", type:"Practical Deep Learning", color:"teal", icon:"🤖"},
+      {name:"StatQuest (YouTube)", type:"Statistics Made Simple", color:"amber", icon:"📹"},
+      {name:"Google ML Crash Course", type:"Machine Learning Basics", color:"purple", icon:"🎓"},
+      {name:"Pandas Documentation", type:"Data Manipulation Guide", color:"teal", icon:"🐼"},
+      {name:"Towards Data Science", type:"Articles & Tutorials", color:"blue", icon:"📝"},
+    ]
+  },
+  android: {
+    title: "Android Developer",
+    required: ["Java","Python","SQL","Git/GitHub","DSA","MySQL"],
+    nice: ["Flutter","REST APIs","Docker","Linux"],
+    jobs: [
+      {role:"Android Developer", company:"App Studio", loc:"Vadodara/Ahmedabad", salary:"₹3–6 LPA", match:"high"},
+      {role:"Mobile App Developer", company:"Startup", loc:"Remote/Gujarat", salary:"₹4–8 LPA", match:"high"},
+      {role:"Flutter Developer", company:"Product Company", loc:"Ahmedabad", salary:"₹3.5–7 LPA", match:"med"},
+    ],
+    roadmap: [
+      {month:"Month 1", title:"Kotlin / Java for Android", desc:"Kotlin syntax, OOP concepts, Android Studio setup.", done: false},
+      {month:"Month 2", title:"Android UI Development", desc:"XML layouts, RecyclerView, Navigation Components.", done: false},
+      {month:"Month 3", title:"Data Storage & APIs", desc:"Room DB, Retrofit, connecting to REST APIs.", done: false},
+      {month:"Month 4", title:"Publish to Play Store", desc:"Build a real app, test it, and publish it on Google Play.", done: false},
+    ],
+    resources: [
+      {name:"Android Developers (Google)", type:"Official Android Docs", color:"teal", icon:"🤖"},
+      {name:"Kotlin Koans", type:"Kotlin Practice Exercises", color:"purple", icon:"🎯"},
+      {name:"Philipp Lackner (YouTube)", type:"Android Dev Tutorials", color:"blue", icon:"📹"},
+      {name:"Flutter Docs", type:"Cross-platform Basics", color:"amber", icon:"💙"},
+    ]
+  },
+  devops: {
+    title: "DevOps Engineer",
+    required: ["Linux","Docker","Git/GitHub","AWS/Cloud","Python","SQL","DSA"],
+    nice: ["JavaScript","Node.js","MongoDB","MySQL"],
+    jobs: [
+      {role:"DevOps Engineer", company:"IT Services", loc:"Ahmedabad/Remote", salary:"₹5–10 LPA", match:"high"},
+      {role:"Cloud Support Engineer", company:"AWS Partner", loc:"Bangalore/Remote", salary:"₹4–8 LPA", match:"med"},
+      {role:"Site Reliability Engineer", company:"Product Co.", loc:"Remote", salary:"₹8–15 LPA", match:"low"},
+    ],
+    roadmap: [
+      {month:"Month 1", title:"Linux & Shell Scripting", desc:"Command line, bash scripting, file permissions, process management.", done: false},
+      {month:"Month 2", title:"Docker & Containers", desc:"Docker images, containers, docker-compose, networking.", done: false},
+      {month:"Month 3", title:"CI/CD Pipelines", desc:"GitHub Actions, Jenkins basics, automated testing & deployment.", done: false},
+      {month:"Month 4", title:"Cloud (AWS Fundamentals)", desc:"EC2, S3, IAM, RDS. Get AWS Cloud Practitioner certified.", done: false},
+    ],
+    resources: [
+      {name:"Linux Journey", type:"Free Linux Learning Path", color:"amber", icon:"🐧"},
+      {name:"Play with Docker", type:"Interactive Docker Labs", color:"blue", icon:"🐳"},
+      {name:"AWS Free Tier", type:"Hands-on Cloud Practice", color:"teal", icon:"☁️"},
+      {name:"DevOps Roadmap.sh", type:"Structured Learning Path", color:"purple", icon:"🗺️"},
+    ]
+  },
+  uiux: {
+    title: "UI/UX Designer",
+    required: ["HTML/CSS","JavaScript","Bootstrap","Git/GitHub"],
+    nice: ["React","Vue.js","DSA"],
+    jobs: [
+      {role:"UI/UX Designer", company:"Digital Agency", loc:"Ahmedabad/Remote", salary:"₹3–6 LPA", match:"high"},
+      {role:"Product Designer", company:"Startup", loc:"Remote", salary:"₹4–9 LPA", match:"med"},
+      {role:"Front-end + Design", company:"E-commerce Co.", loc:"Gujarat", salary:"₹3–5 LPA", match:"high"},
+    ],
+    roadmap: [
+      {month:"Month 1", title:"Design Principles & Figma", desc:"Typography, color theory, layout grids. Master Figma tool.", done: false},
+      {month:"Month 2", title:"UX Research & Wireframing", desc:"User personas, journey maps, low-fidelity wireframes.", done: false},
+      {month:"Month 3", title:"Prototyping & Design Systems", desc:"High-fidelity mockups, interactive prototypes in Figma.", done: false},
+      {month:"Month 4", title:"Frontend Implementation", desc:"Translate designs to HTML/CSS. Learn basic React for handoff.", done: false},
+    ],
+    resources: [
+      {name:"Google UX Design Certificate", type:"Coursera (Audit Free)", color:"blue", icon:"🎨"},
+      {name:"Figma Community", type:"Templates & Tutorials", color:"purple", icon:"✏️"},
+      {name:"Laws of UX", type:"Design Principles Guide", color:"teal", icon:"📐"},
+      {name:"Dribbble", type:"Design Inspiration", color:"amber", icon:"🏀"},
+    ]
+  }
+};
+
+function getSelectedSkills() {
+  const checked = document.querySelectorAll('.skill-chip input[type="checkbox"]:checked');
+  return Array.from(checked).map(c => c.value);
+}
+
+function analyzeSkills() {
+  const name = document.getElementById('userName').value.trim() || "Student";
+  const career = document.getElementById('careerPath').value;
+  const education = document.getElementById('education').value;
+
+  if (!career) {
+    alert("Please select a Target Career Path first!");
+    return;
+  }
+
+  const userSkills = getSelectedSkills();
+  const data = CAREER_DATA[career];
+
+  // Calculate score
+  const required = data.required;
+  const have = userSkills.filter(s => required.includes(s));
+  const missing = required.filter(s => !userSkills.includes(s));
+  const score = Math.round((have.length / required.length) * 100);
+
+  // Update steps
+  document.getElementById('step1').className = 'step done';
+  document.getElementById('step2').className = 'step done';
+  document.getElementById('step3').className = 'step active';
+
+  // Show results
+  document.getElementById('formSection').style.display = 'none';
+  document.getElementById('resultsSection').classList.add('visible');
+
+  // Update header
+  document.getElementById('resultName').textContent = `${name}'s Skill Report`;
+  document.getElementById('resultSubtitle').textContent = `Targeting: ${data.title}`;
+  document.getElementById('resultCareer').textContent = data.title;
+  document.getElementById('resultLevel').textContent = `You have ${have.length} of ${required.length} required skills`;
+
+  // Score animation
+  setTimeout(() => {
+    document.getElementById('progressFill').style.width = score + '%';
+    animateNumber('scoreNum', 0, score, 1000, '%');
+  }, 200);
+
+  // Skill cards
+  const categories = [
+    {
+      title: "✅ Skills You Have",
+      skills: have,
+      dotClass: "dot-have",
+      badge: "done",
+      badgeText: "You Know This"
+    },
+    {
+      title: "🚨 Skills You Need",
+      skills: missing,
+      dotClass: "dot-missing",
+      badge: "high",
+      badgeText: "Must Learn"
+    },
+    {
+      title: "⭐ Bonus Skills",
+      skills: data.nice.filter(s => !userSkills.includes(s)),
+      dotClass: "dot-missing",
+      badge: "medium",
+      badgeText: "Nice to Have"
+    },
+    {
+      title: "🏆 Bonus Skills You Have",
+      skills: data.nice.filter(s => userSkills.includes(s)),
+      dotClass: "dot-have",
+      badge: "low",
+      badgeText: "Bonus"
+    }
+  ];
+
+  const grid = document.getElementById('skillCards');
+  grid.innerHTML = '';
+  categories.forEach(cat => {
+    if (!cat.skills.length) return;
+    const card = document.createElement('div');
+    card.className = 'skill-card';
+    card.innerHTML = `
+      <div class="skill-card-header">
+        <div class="skill-card-title">${cat.title}</div>
+        <span class="badge badge-${cat.badge}">${cat.badgeText}</span>
+      </div>
+      ${cat.skills.map(s => `<div class="skill-row"><div class="dot ${cat.dotClass}"></div>${s}</div>`).join('')}
+    `;
+    grid.appendChild(card);
+  });
+
+  // Roadmap
+  const timeline = document.getElementById('roadmapTimeline');
+  timeline.innerHTML = data.roadmap.map((item, i) => `
+    <div class="timeline-item${item.done ? ' done' : ''}">
+      <div class="timeline-month">${item.month}</div>
+      <div class="timeline-title">${item.title}</div>
+      <div class="timeline-desc">${item.desc}</div>
+    </div>
+  `).join('');
+
+  // Jobs
+  const jobsBody = document.getElementById('jobsBody');
+  jobsBody.innerHTML = data.jobs.map(j => `
+    <tr>
+      <td style="font-weight: 600;">${j.role}</td>
+      <td style="color: var(--text-muted);">${j.company}</td>
+      <td>${j.loc}</td>
+      <td style="font-weight: 600; color: var(--teal-600);">${j.salary}</td>
+      <td><span class="match-pill match-${j.match}">${j.match === 'high' ? '✓ Good Match' : j.match === 'med' ? '~ Close' : '↑ Stretch'}</span></td>
+    </tr>
+  `).join('');
+
+  // Resources
+  const resourceGrid = document.getElementById('resourceGrid');
+  resourceGrid.innerHTML = data.resources.map(r => `
+    <div class="resource-item">
+      <div class="res-icon ${r.color}">${r.icon}</div>
+      <div>
+        <div class="res-name">${r.name}</div>
+        <div class="res-type">${r.type}</div>
+      </div>
+    </div>
+  `).join('');
+
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function animateNumber(id, from, to, duration, suffix='') {
+  const el = document.getElementById(id);
+  const start = performance.now();
+  function update(ts) {
+    const progress = Math.min((ts - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(from + (to - from) * ease) + suffix;
+    if (progress < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+function switchTab(tabId, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(tabId).classList.add('active');
+  btn.classList.add('active');
+}
+
+function resetForm() {
+  document.getElementById('formSection').style.display = 'block';
+  document.getElementById('resultsSection').classList.remove('visible');
+  document.getElementById('step1').className = 'step active';
+  document.getElementById('step2').className = 'step';
+  document.getElementById('step3').className = 'step';
+  document.querySelectorAll('.skill-chip input[type="checkbox"]').forEach(c => { c.checked = false; });
+  document.querySelectorAll('.skill-chip').forEach(c => c.classList.remove('selected'));
+  document.getElementById('progressFill').style.width = '0%';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// Chip click toggle — read checkbox state AFTER the native toggle settles
+document.querySelectorAll('.skill-chip').forEach(chip => {
+  chip.addEventListener('click', function() {
+    const checkbox = this.querySelector('input[type="checkbox"]');
+    // Use setTimeout 0 so the native checkbox state updates first
+    setTimeout(() => {
+      if (checkbox.checked) {
+        this.classList.add('selected');
+      } else {
+        this.classList.remove('selected');
+      }
+    }, 0);
+  });
+});
+
+// Jobs nav: switch to jobs tab if results open, else scroll to analyzer
+function goToJobs() {
+  const resultsVisible = document.getElementById('resultsSection').classList.contains('visible');
+  if (resultsVisible) {
+    const jobsBtn = document.querySelector('.tab-btn:nth-child(3)');
+    switchTab('jobs-tab', jobsBtn);
+    setTimeout(() => scrollToId('jobs-anchor'), 50);
+  } else {
+    scrollToId('analyzer');
+  }
+}
+
+// Smooth scroll helper with nav offset
+function scrollToId(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const offset = 70; // nav height
+  const top = el.getBoundingClientRect().top + window.scrollY - offset;
+  window.scrollTo({ top, behavior: 'smooth' });
+}
+</script>
+
+<!-- RESPONSIVE GRID FIX -->
+<style>
+@media (max-width: 500px) {
+  .profile-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+
+</body>
+</html>
